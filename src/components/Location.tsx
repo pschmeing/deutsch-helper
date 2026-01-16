@@ -1,6 +1,30 @@
 import { motion } from "framer-motion";
-import { MapPin, Navigation } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
+
+const contactInfo = [
+  {
+    icon: Phone,
+    title: "Telefon",
+    content: "+49 123 456 7890",
+  },
+  {
+    icon: Mail,
+    title: "E-Mail",
+    content: "info@salon-elegance.de",
+  },
+  {
+    icon: Clock,
+    title: "Öffnungszeiten",
+    content: (
+      <>
+        Mo - Fr: 09:00 - 19:00 Uhr<br />
+        Sa: 09:00 - 16:00 Uhr<br />
+        So: Geschlossen
+      </>
+    ),
+  },
+];
 
 const Location = () => {
   return (
@@ -8,11 +32,6 @@ const Location = () => {
       <div className="salon-container">
         {/* Header */}
         <div className="text-center mb-16">
-          <ScrollReveal>
-            <p className="text-primary uppercase tracking-[0.3em] text-sm mb-4">
-              Anfahrt
-            </p>
-          </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <h2 className="salon-heading text-foreground mb-6">
               Unser <span className="italic">Standort</span>
@@ -46,7 +65,7 @@ const Location = () => {
           </ScrollReveal>
 
           {/* Address Info */}
-          <div className="space-y-8">
+          <div className="grid gap-8 md:grid-cols-2">
             <ScrollReveal variant="fadeIn">
               <div className="flex items-start space-x-4">
                 <motion.div
@@ -69,29 +88,36 @@ const Location = () => {
               </div>
             </ScrollReveal>
 
-            <ScrollReveal variant="fadeIn" delay={0.1}>
-              <div className="flex items-start space-x-4">
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: -5 }}
-                  className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"
-                >
-                  <Navigation className="w-6 h-6 text-primary" />
-                </motion.div>
-                <div>
-                  <h3 className="font-serif text-2xl text-foreground mb-3">
-                    Anfahrt
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    <strong>Mit der U-Bahn:</strong> U6 bis Friedrichstraße,
-                    dann 5 Minuten zu Fuß.<br /><br />
-                    <strong>Mit dem Auto:</strong> Parkplätze direkt vor dem
-                    Salon sowie im Parkhaus nebenan verfügbar.
-                  </p>
+            <ScrollReveal variant="fadeIn" delay={0.2}>
+              <div className="md:pl-4">
+                <h3 className="font-serif text-2xl text-foreground mb-6">
+                  Kontakt
+                </h3>
+                <div className="space-y-6">
+                  {contactInfo.map((info) => (
+                    <div
+                      key={info.title}
+                      className="flex items-start space-x-4"
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"
+                      >
+                        <info.icon className="w-5 h-5 text-primary" />
+                      </motion.div>
+                      <div>
+                        <p className="font-medium text-foreground mb-1">
+                          {info.title}
+                        </p>
+                        <p className="text-muted-foreground">{info.content}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </ScrollReveal>
 
-            <ScrollReveal variant="fadeIn" delay={0.2}>
+            <ScrollReveal variant="fadeIn" delay={0.3}>
               <motion.a
                 href="https://www.google.com/maps?q=Lagerstra%C3%9Fe%202%2C%2046325%20Borken%20Burlo%2C%20Deutschland"
                 target="_blank"

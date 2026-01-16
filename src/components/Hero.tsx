@@ -13,13 +13,6 @@ const Hero = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0.3]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
-  const scrollToContact = () => {
-    const element = document.querySelector("#kontakt");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <section
       ref={ref}
@@ -70,23 +63,11 @@ const Hero = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
-          className="text-primary-foreground/90 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-primary-foreground/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
         >
           Wo Schönheit auf Handwerkskunst trifft. Erleben Sie exklusive Haarpflege
           in einer Atmosphäre zeitloser Eleganz.
         </motion.p>
-
-        <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1, ease: [0.25, 0.4, 0.25, 1] }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={scrollToContact}
-          className="salon-button-primary"
-        >
-          Termin Buchen
-        </motion.button>
       </motion.div>
 
       {/* Scroll Indicator */}

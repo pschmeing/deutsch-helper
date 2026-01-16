@@ -1,8 +1,9 @@
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Scissors, Sparkles, Palette, Crown } from "lucide-react";
-import { useRef } from "react";
+import { useMemo } from "react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "@/components/animations/StaggerContainer";
+import useVanillaTilt from "@/hooks/use-vanilla-tilt";
 
 const services = [
   {
@@ -48,25 +49,23 @@ const services = [
 ];
 
 const Services = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-  const tiltX = useSpring(
-    useTransform(scrollYProgress, [0, 0.5, 1], [5, 0, -5]),
-    {
-      stiffness: 140,
-      damping: 22,
-    },
+  const tiltOptions = useMemo(
+    () => ({
+      max: 3,
+      scale: 1.01,
+      speed: 700,
+      perspective: 900,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      transition: true,
+      gyroscope: false,
+      axis: "y",
+    }),
+    [],
   );
+  const setTiltRef = useVanillaTilt(tiltOptions);
 
   return (
-    <section
-      id="leistungen"
-      ref={sectionRef}
-      className="salon-section bg-background overflow-hidden"
-    >
+    <section id="leistungen" className="salon-section bg-background overflow-hidden">
       <div className="salon-container">
         {/* Header */}
         <div className="text-center mb-16">
@@ -90,45 +89,49 @@ const Services = () => {
           {services.map((service) => (
             <StaggerItem key={service.category}>
               <motion.div
-                className="salon-card p-8 h-full transform-gpu will-change-transform"
+                className="h-full"
                 variants={{
                   hover: { y: -10, scale: 1.03 },
                 }}
                 whileHover="hover"
                 transition={{ duration: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
-                style={{ rotateX: tiltX, transformPerspective: 1200 }}
               >
-                {/* Icon */}
-                <motion.div
-                  className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto"
-                  variants={{
-                    hover: { scale: 1.18, rotate: 8 },
-                  }}
-                  transition={{ duration: 0.3 }}
+                <div
+                  ref={setTiltRef}
+                  className="salon-card p-8 h-full transform-gpu will-change-transform"
                 >
-                  <service.icon className="w-6 h-6 text-primary" />
-                </motion.div>
+                  {/* Icon */}
+                  <motion.div
+                    className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto"
+                    variants={{
+                      hover: { scale: 1.18, rotate: 8 },
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <service.icon className="w-6 h-6 text-primary" />
+                  </motion.div>
 
-                {/* Category */}
-                <h3 className="font-serif text-2xl text-foreground text-center mb-6">
-                  {service.category}
-                </h3>
+                  {/* Category */}
+                  <h3 className="font-serif text-2xl text-foreground text-center mb-6">
+                    {service.category}
+                  </h3>
 
-                {/* Items */}
-                <div className="space-y-4">
-                  {service.items.map((item) => (
-                    <div
-                      key={item.name}
-                      className="flex justify-between items-center border-b border-border pb-3"
-                    >
-                      <span className="text-muted-foreground text-sm">
-                        {item.name}
-                      </span>
-                      <span className="text-primary font-medium text-sm">
-                        {item.price}
-                      </span>
-                    </div>
-                  ))}
+                  {/* Items */}
+                  <div className="space-y-4">
+                    {service.items.map((item) => (
+                      <div
+                        key={item.name}
+                        className="flex justify-between items-center border-b border-border pb-3"
+                      >
+                        <span className="text-muted-foreground text-sm">
+                          {item.name}
+                        </span>
+                        <span className="text-primary font-medium text-sm">
+                          {item.price}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             </StaggerItem>
