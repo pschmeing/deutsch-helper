@@ -89,16 +89,10 @@ const Contact = () => {
 
             <div className="space-y-6">
               {contactInfo.map((info, index) => (
-                <motion.div
+                <ScrollReveal
                   key={info.title}
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{
-                    delay: index * 0.15,
-                    duration: 0.6,
-                    ease: [0.25, 0.4, 0.25, 1],
-                  }}
-                  viewport={{ once: true }}
+                  variant="fadeIn"
+                  delay={index * 0.1}
                   className="flex items-start space-x-4"
                 >
                   <motion.div
@@ -111,7 +105,7 @@ const Contact = () => {
                     <p className="font-medium text-foreground mb-1">{info.title}</p>
                     <p className="text-muted-foreground">{info.content}</p>
                   </div>
-                </motion.div>
+                </ScrollReveal>
               ))}
             </div>
           </ScrollReveal>
@@ -125,12 +119,7 @@ const Contact = () => {
             >
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    viewport={{ once: true }}
-                  >
+                  <ScrollReveal variant="fadeIn" delay={0.05}>
                     <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                       Name *
                     </label>
@@ -144,13 +133,8 @@ const Contact = () => {
                       className="w-full px-4 py-3 bg-background border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-300"
                       placeholder="Ihr Name"
                     />
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    viewport={{ once: true }}
-                  >
+                  </ScrollReveal>
+                  <ScrollReveal variant="fadeIn" delay={0.1}>
                     <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                       Telefon
                     </label>
@@ -163,15 +147,10 @@ const Contact = () => {
                       className="w-full px-4 py-3 bg-background border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-300"
                       placeholder="Ihre Telefonnummer"
                     />
-                  </motion.div>
+                  </ScrollReveal>
                 </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  viewport={{ once: true }}
-                >
+                <ScrollReveal variant="fadeIn" delay={0.15}>
                   <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                     E-Mail *
                   </label>
@@ -185,14 +164,9 @@ const Contact = () => {
                     className="w-full px-4 py-3 bg-background border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-300"
                     placeholder="ihre@email.de"
                   />
-                </motion.div>
+                </ScrollReveal>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  viewport={{ once: true }}
-                >
+                <ScrollReveal variant="fadeIn" delay={0.2}>
                   <label htmlFor="service" className="block text-sm font-medium text-foreground mb-2">
                     Gewünschte Leistung
                   </label>
@@ -210,14 +184,9 @@ const Contact = () => {
                     <option value="styling">Styling / Event</option>
                     <option value="beratung">Beratung</option>
                   </select>
-                </motion.div>
+                </ScrollReveal>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  viewport={{ once: true }}
-                >
+                <ScrollReveal variant="fadeIn" delay={0.25}>
                   <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
                     Nachricht
                   </label>
@@ -230,21 +199,19 @@ const Contact = () => {
                     className="w-full px-4 py-3 bg-background border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-300 resize-none"
                     placeholder="Ihre Nachricht oder Terminwunsch..."
                   />
-                </motion.div>
+                </ScrollReveal>
 
-                <motion.button
-                  type="submit"
-                  className="salon-button-primary w-full flex items-center justify-center gap-2"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <Send className="w-4 h-4" />
-                  Anfrage senden
-                </motion.button>
+                <ScrollReveal variant="fadeIn" delay={0.3}>
+                  <motion.button
+                    type="submit"
+                    className="salon-button-primary w-full flex items-center justify-center gap-2"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Send className="w-4 h-4" />
+                    Anfrage senden
+                  </motion.button>
+                </ScrollReveal>
               </form>
             </motion.div>
           </ScrollReveal>

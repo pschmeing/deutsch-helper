@@ -1,4 +1,11 @@
-import { motion, useInView, Variants } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { useRef, ReactNode } from "react";
 
 interface StaggerContainerProps {
@@ -8,36 +15,11 @@ interface StaggerContainerProps {
   once?: boolean;
 }
 
-const containerVariants: Variants = {
-  hidden: { opacity: 1 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
-};
-
 const StaggerContainer = ({
   children,
   className = "",
-  once = true,
 }: StaggerContainerProps) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once, margin: "-50px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={containerVariants}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 };
 
 export const StaggerItem = ({
@@ -47,20 +29,33 @@ export const StaggerItem = ({
   children: ReactNode;
   className?: string;
 }) => {
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.25, 0.4, 0.25, 1],
-      },
-    },
-  };
+  const ref = useRef(null);
+  const shouldReduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.9", "end 0.2"],
+  });
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 170,
+    damping: 30,
+    mass: 0.25,
+  });
+  const reducedProgress = useMotionValue(1);
+  const progress = shouldReduceMotion ? reducedProgress : smoothProgress;
+  const tiltX = 6;
+  const rotateX = useTransform(progress, [0, 0.3, 0.5, 0.7, 1], [0, 0, tiltX, 0, 0]);
 
   return (
-    <motion.div variants={itemVariants} className={className}>
+    <motion.div
+      ref={ref}
+      className={className}
+      style={{
+        rotateX,
+        transformPerspective: 1000,
+        transformStyle: "preserve-3d",
+        willChange: "transform",
+      }}
+    >
       {children}
     </motion.div>
   );
