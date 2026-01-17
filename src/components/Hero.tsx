@@ -1,17 +1,31 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import heroImage from "@/assets/hero-salon.jpg";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const Hero = () => {
   const ref = useRef(null);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  // Disable parallax if reduced motion is preferred, reduce on mobile for better performance
+  const y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    prefersReducedMotion ? ["0%", "0%"] : isMobile ? ["0%", "10%"] : ["0%", "30%"]
+  );
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0.3]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 1],
+    prefersReducedMotion ? [1, 1] : isMobile ? [1, 1.05] : [1, 1.1]
+  );
 
   return (
     <section
@@ -31,14 +45,14 @@ const Hero = () => {
 
       {/* Content */}
       <motion.div
-        className="relative z-10 text-center px-6 max-w-4xl mx-auto"
+        className="relative z-10 text-center px-4 md:px-6 max-w-4xl mx-auto"
         style={{ opacity }}
       >
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
-          className="text-primary-foreground/80 uppercase tracking-[0.3em] text-sm mb-6"
+          className="text-primary-foreground/80 uppercase tracking-[0.2em] md:tracking-[0.3em] text-xs md:text-sm mb-4 md:mb-6"
         >
           Willkommen bei
         </motion.p>
@@ -47,7 +61,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
-          className="font-serif text-5xl md:text-7xl lg:text-8xl text-primary-foreground mb-6"
+          className="font-serif text-4xl md:text-7xl lg:text-8xl text-primary-foreground mb-4 md:mb-6 leading-tight"
         >
           Salon <span className="italic">Élégance</span>
         </motion.h1>
@@ -56,14 +70,14 @@ const Hero = () => {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
-          className="w-24 h-0.5 bg-primary mx-auto mb-8 origin-center"
+          className="w-20 md:w-24 h-0.5 bg-primary mx-auto mb-6 md:mb-8 origin-center"
         />
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
-          className="text-primary-foreground/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
+          className="text-primary-foreground/90 text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-2"
         >
           Wo Schönheit auf Handwerkskunst trifft. Erleben Sie exklusive Haarpflege
           in einer Atmosphäre zeitloser Eleganz.

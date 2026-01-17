@@ -31,7 +31,7 @@ const Location = () => {
     <section id="standort" className="salon-section bg-background overflow-hidden">
       <div className="salon-container">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <ScrollReveal delay={0.1}>
             <h2 className="salon-heading text-foreground mb-6">
               Unser <span className="italic">Standort</span>
@@ -42,7 +42,7 @@ const Location = () => {
           </ScrollReveal>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Map Embed */}
           <ScrollReveal variant="scale">
             <motion.div
@@ -53,32 +53,32 @@ const Location = () => {
               <iframe
                 src="https://www.google.com/maps?q=Lagerstra%C3%9Fe%202%2C%2046325%20Borken%20Burlo%2C%20Deutschland&output=embed"
                 width="100%"
-                height="400"
+                height="300"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Salon Standort"
-                className="w-full"
+                className="w-full md:h-[400px]"
               />
             </motion.div>
           </ScrollReveal>
 
           {/* Address Info */}
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-6 md:gap-8 md:grid-cols-2">
             <ScrollReveal variant="fadeIn">
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-3 md:space-x-4">
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"
                 >
-                  <MapPin className="w-6 h-6 text-primary" />
+                  <MapPin className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                 </motion.div>
                 <div>
-                  <h3 className="font-serif text-2xl text-foreground mb-3">
+                  <h3 className="font-serif text-xl md:text-2xl text-foreground mb-2 md:mb-3">
                     Adresse
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
                     Salon Élégance<br />
                     Lagerstraße 2<br />
                     46325 Borken Burlo<br />
@@ -90,26 +90,26 @@ const Location = () => {
 
             <ScrollReveal variant="fadeIn" delay={0.2}>
               <div className="md:pl-4">
-                <h3 className="font-serif text-2xl text-foreground mb-6">
+                <h3 className="font-serif text-xl md:text-2xl text-foreground mb-4 md:mb-6">
                   Kontakt
                 </h3>
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   {contactInfo.map((info) => (
                     <div
                       key={info.title}
-                      className="flex items-start space-x-4"
+                      className="flex items-start space-x-3 md:space-x-4"
                     >
                       <motion.div
                         whileHover={{ scale: 1.1 }}
-                        className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"
                       >
-                        <info.icon className="w-5 h-5 text-primary" />
+                        <info.icon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                       </motion.div>
                       <div>
-                        <p className="font-medium text-foreground mb-1">
+                        <p className="font-medium text-foreground mb-0.5 md:mb-1 text-sm md:text-base">
                           {info.title}
                         </p>
-                        <p className="text-muted-foreground">{info.content}</p>
+                        <p className="text-muted-foreground text-xs md:text-base">{info.content}</p>
                       </div>
                     </div>
                   ))}
@@ -122,7 +122,7 @@ const Location = () => {
                 href="https://www.google.com/maps?q=Lagerstra%C3%9Fe%202%2C%2046325%20Borken%20Burlo%2C%20Deutschland"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="salon-button-outline inline-flex"
+                className="salon-button-outline inline-flex min-h-[44px] items-center justify-center"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
