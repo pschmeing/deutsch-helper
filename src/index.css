@@ -146,7 +146,6 @@
 
   .salon-card:hover {
     box-shadow: var(--shadow-card);
-    transform: translateY(-4px);
   }
 
   .salon-section {

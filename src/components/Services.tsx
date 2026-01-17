@@ -53,27 +53,35 @@ interface TiltCardProps {
 
 const TiltCard = ({ service, index }: TiltCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  
-  // Mouse-based tilt - raw values
+
+  // Mouse-based tilt
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  
-  // Smooth spring for mouse tilt
-  const springConfig = { stiffness: 100, damping: 15, mass: 0.5 };
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [6, -6]), springConfig);
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-6, 6]), springConfig);
-  
+
   // Scroll-based tilt
   const { scrollYProgress } = useScroll({
     target: cardRef,
     offset: ["start end", "end start"],
   });
-  
-  const scrollRotateX = useSpring(
-    useTransform(scrollYProgress, [0, 0.3, 0.5, 0.7, 1], [4, 1, 0, -1, -4]),
-    { stiffness: 80, damping: 20 }
+
+  // Mouse rotations (max 15 degrees for more dramatic effect)
+  const mouseRotateX = useTransform(mouseY, [-0.5, 0.5], [15, -15]);
+  const mouseRotateY = useTransform(mouseX, [-0.5, 0.5], [-15, 15]);
+
+  // Scroll rotation (more tilt based on position)
+  const scrollRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [10, 0, -10]);
+
+  // Combine mouse + scroll for X rotation
+  const combinedRotateX = useTransform(
+    [mouseRotateX, scrollRotateX],
+    ([mouse, scroll]) => (mouse as number) + (scroll as number)
   );
-  
+
+  // Spring smoothing (faster response for more dramatic feel)
+  const springConfig = { stiffness: 200, damping: 15, mass: 0.3 };
+  const smoothRotateX = useSpring(combinedRotateX, springConfig);
+  const smoothRotateY = useSpring(mouseRotateY, springConfig);
+
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -82,7 +90,7 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
     mouseX.set(x);
     mouseY.set(y);
   };
-  
+
   const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
@@ -91,53 +99,41 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
   return (
     <motion.div
       ref={cardRef}
-      className="h-full perspective-1000"
+      className="h-full"
+      style={{ perspective: 1000 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ 
-        duration: 0.6, 
+      transition={{
+        duration: 0.6,
         delay: index * 0.1,
-        ease: [0.25, 0.4, 0.25, 1] 
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        perspective: 1000,
+        ease: [0.25, 0.4, 0.25, 1]
       }}
     >
       <motion.div
-        className="salon-card p-8 h-full transform-gpu cursor-default"
+        className="salon-card p-8 h-full transform-gpu"
         style={{
-          rotateX,
-          rotateY,
+          rotateX: smoothRotateX,
+          rotateY: smoothRotateY,
           transformStyle: "preserve-3d",
         }}
       >
-        <motion.div
-          style={{
-            rotateX: scrollRotateX,
-            transformStyle: "preserve-3d",
-          }}
-        >
+        {/* Content with 3D depth */}
+        <div style={{ transform: "translateZ(25px)", transformStyle: "preserve-3d" }}>
           {/* Icon */}
-          <div
-            className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto"
-            style={{ transform: "translateZ(20px)" }}
-          >
+          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto">
             <service.icon className="w-6 h-6 text-primary" />
           </div>
 
           {/* Category */}
-          <h3 
-            className="font-serif text-2xl text-foreground text-center mb-6"
-            style={{ transform: "translateZ(15px)" }}
-          >
+          <h3 className="font-serif text-2xl text-foreground text-center mb-6">
             {service.category}
           </h3>
 
           {/* Items */}
-          <div className="space-y-4" style={{ transform: "translateZ(10px)" }}>
+          <div className="space-y-4">
             {service.items.map((item) => (
               <div
                 key={item.name}
@@ -152,7 +148,7 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </motion.div>
   );

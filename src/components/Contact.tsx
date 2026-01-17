@@ -42,7 +42,7 @@ const Contact = () => {
                     Termin online buchen
                   </motion.button>
                 </DialogTrigger>
-                <DialogContent className="max-w-5xl">
+                <DialogContent className="max-w-md">
                   <DialogHeader>
                     <DialogTitle className="font-serif text-2xl">
                       Termin online buchen
