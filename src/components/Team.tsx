@@ -1,5 +1,7 @@
 import { motion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
 import ScrollReveal from "@/components/animations/ScrollReveal";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import {
   Carousel,
   CarouselContent,
@@ -80,6 +82,8 @@ const teamMembers = [
 ];
 
 const Team = () => {
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, {
@@ -87,9 +91,14 @@ const Team = () => {
     damping: 22,
     mass: 0.2,
   });
-  const tiltX = useTransform(smoothVelocity, [-1200, 0, 1200], [5, 0, -5], {
-    clamp: true,
-  });
+
+  // Disable velocity tilt on mobile for better performance, predictability, and if reduced motion is preferred
+  const tiltX = useTransform(
+    smoothVelocity,
+    [-1200, 0, 1200],
+    prefersReducedMotion || isMobile ? [0, 0, 0] : [5, 0, -5],
+    { clamp: true }
+  );
 
   return (
     <section id="team" className="salon-section bg-secondary overflow-hidden">
@@ -112,12 +121,12 @@ const Team = () => {
         </div>
 
         {/* Team Carousel */}
-        <Carousel opts={{ align: "start" }} className="relative px-12">
-          <CarouselContent className="-ml-6">
+        <Carousel opts={{ align: "start" }} className="relative px-2 md:px-12">
+          <CarouselContent className="-ml-4 md:-ml-6">
             {teamMembers.map((member) => (
               <CarouselItem
                 key={member.name}
-                className="pl-6 sm:basis-4/5 md:basis-1/2 lg:basis-[30%] [perspective:1200px]"
+                className="pl-4 md:pl-6 sm:basis-4/5 md:basis-1/2 lg:basis-[30%] [perspective:1200px]"
               >
                 <Dialog>
                   <DialogTrigger asChild>
@@ -146,25 +155,25 @@ const Team = () => {
                       </div>
 
                       {/* Info */}
-                      <div className="p-4 text-center">
-                        <h3 className="font-serif text-xl text-foreground mb-1">
+                      <div className="p-3 md:p-4 text-center">
+                        <h3 className="font-serif text-lg md:text-xl text-foreground mb-1">
                           {member.name}
                         </h3>
-                        <p className="text-primary text-xs uppercase tracking-wider mb-2">
+                        <p className="text-primary text-[0.65rem] md:text-xs uppercase tracking-wider mb-2">
                           {member.role}
                         </p>
-                        <p className="text-muted-foreground text-xs mb-3">
+                        <p className="text-muted-foreground text-[0.65rem] md:text-xs mb-2 md:mb-3">
                           {member.experience}
                         </p>
-                        <span className="text-primary text-[0.65rem] uppercase tracking-[0.3em]">
+                        <span className="text-primary text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] md:tracking-[0.3em]">
                           Mehr Infos
                         </span>
                       </div>
                     </motion.button>
                   </DialogTrigger>
-                  <DialogContent className="bg-card text-foreground border-border sm:max-w-3xl">
-                    <div className="grid gap-6 md:grid-cols-[220px_1fr]">
-                      <div className="overflow-hidden rounded-sm">
+                  <DialogContent className="bg-card text-foreground border-border max-w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+                    <div className="grid gap-4 md:gap-6 md:grid-cols-[220px_1fr]">
+                      <div className="overflow-hidden rounded-sm max-h-[200px] md:max-h-none">
                         <img
                           src={member.image}
                           alt={member.name}
@@ -173,32 +182,32 @@ const Team = () => {
                       </div>
                       <div>
                         <DialogHeader className="text-left">
-                          <DialogTitle className="font-serif text-2xl">
+                          <DialogTitle className="font-serif text-xl md:text-2xl">
                             {member.name}
                           </DialogTitle>
-                          <DialogDescription className="text-primary uppercase tracking-[0.2em] text-xs">
+                          <DialogDescription className="text-primary uppercase tracking-[0.15em] md:tracking-[0.2em] text-[0.65rem] md:text-xs">
                             {member.role}
                           </DialogDescription>
                         </DialogHeader>
-                        <p className="mt-3 text-sm text-muted-foreground">
+                        <p className="mt-3 text-xs md:text-sm text-muted-foreground leading-relaxed">
                           {member.bio}
                         </p>
                         <div className="mt-4">
-                          <p className="text-xs uppercase tracking-[0.2em] text-primary">
+                          <p className="text-[0.65rem] md:text-xs uppercase tracking-[0.15em] md:tracking-[0.2em] text-primary">
                             Schwerpunkte
                           </p>
-                          <div className="mt-2 flex flex-wrap gap-2">
+                          <div className="mt-2 flex flex-wrap gap-1.5 md:gap-2">
                             {member.specialties.map((specialty) => (
                               <span
                                 key={specialty}
-                                className="text-[0.7rem] uppercase tracking-wider border border-border px-2 py-1 text-muted-foreground"
+                                className="text-[0.65rem] md:text-[0.7rem] uppercase tracking-wider border border-border px-2 py-1 text-muted-foreground"
                               >
                                 {specialty}
                               </span>
                             ))}
                           </div>
                         </div>
-                        <div className="mt-4 grid gap-2 text-sm">
+                        <div className="mt-4 grid gap-1.5 md:gap-2 text-xs md:text-sm">
                           <p className="text-muted-foreground">
                             <span className="text-foreground">Signature-Look:</span>{" "}
                             {member.signature}
