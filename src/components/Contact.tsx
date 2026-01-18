@@ -9,6 +9,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import BookingDialogContent from "@/components/BookingDialogContent";
+import ZeegEmbed from "@/components/ZeegEmbed";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Contact = () => {
   return (
@@ -48,8 +50,22 @@ const Contact = () => {
                       Termin online buchen
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="max-h-[calc(90vh-120px)] overflow-y-auto pr-1 md:pr-2">
-                    <BookingDialogContent />
+                  <div className="max-h-[calc(90vh-140px)] overflow-y-auto pr-1 md:pr-2">
+                    <Tabs defaultValue="demo">
+                      <TabsList className="w-full sm:w-auto">
+                        <TabsTrigger value="demo">Demo</TabsTrigger>
+                        <TabsTrigger value="zeeg">Zeeg</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="demo">
+                        <p className="text-xs text-muted-foreground mb-3">
+                          Demo-Modus mit lokalen Beispieldaten (keine echten Buchungen).
+                        </p>
+                        <BookingDialogContent />
+                      </TabsContent>
+                      <TabsContent value="zeeg">
+                        <ZeegEmbed />
+                      </TabsContent>
+                    </Tabs>
                   </div>
                 </DialogContent>
               </Dialog>

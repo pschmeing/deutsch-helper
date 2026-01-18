@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronLeft, ChevronRight, Clock, Calendar, User, Scissors, Users } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, User, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 
 // Services
 const services = [
@@ -18,25 +19,15 @@ const stylists = [
   { id: "lisa", name: "Lisa", specialty: "Coloristin" },
 ];
 
-// Generate next 7 days
-const generateDays = () => {
-  const days = [];
-  const today = new Date();
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    // Skip Sunday (0)
-    if (date.getDay() !== 0) {
-      days.push({
-        date: date.toISOString().split("T")[0],
-        weekday: date.toLocaleDateString("de-DE", { weekday: "short" }),
-        day: date.getDate(),
-        month: date.toLocaleDateString("de-DE", { month: "short" }),
-      });
-    }
-  }
-  return days.slice(0, 5);
+const formatDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
+
+const formatDateLabel = (date: Date) =>
+  date.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" });
 
 // Time slots
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"];
@@ -44,17 +35,27 @@ const timeSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00"
 // Simulated booked slots (would come from backend)
 const getBookedSlots = (): Record<string, string[]> => {
   const stored = localStorage.getItem("bookedSlots");
-  if (stored) return JSON.parse(stored);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch {
+      localStorage.removeItem("bookedSlots");
+    }
+  }
 
   // Default some slots as booked for demo
-  const days = generateDays();
   const defaultBooked: Record<string, string[]> = {};
-  days.forEach((day, i) => {
-    defaultBooked[day.date] = [
+  const today = new Date();
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    if (date.getDay() === 0) continue;
+    const key = formatDateKey(date);
+    defaultBooked[key] = [
       timeSlots[Math.floor(Math.random() * 3)],
       timeSlots[Math.floor(Math.random() * 3) + 4],
     ];
-  });
+  }
   localStorage.setItem("bookedSlots", JSON.stringify(defaultBooked));
   return defaultBooked;
 };
@@ -64,23 +65,24 @@ const BookingDialogContent = () => {
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [selectedStylist, setSelectedStylist] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [bookedSlots, setBookedSlots] = useState(getBookedSlots);
 
-  const days = useMemo(() => generateDays(), []);
   const service = services.find((s) => s.id === selectedService);
   const stylist = stylists.find((s) => s.id === selectedStylist);
-  const selectedDay = days.find((d) => d.date === selectedDate);
+  const selectedDateKey = selectedDate ? formatDateKey(selectedDate) : null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const isSlotBooked = (date: string, time: string) => {
     return bookedSlots[date]?.includes(time) || false;
   };
 
-  const availableSlots = selectedDate
-    ? timeSlots.filter((t) => !isSlotBooked(selectedDate, t))
+  const availableSlots = selectedDateKey
+    ? timeSlots.filter((t) => !isSlotBooked(selectedDateKey, t))
     : [];
 
   const canProceed = () => {
@@ -100,25 +102,27 @@ const BookingDialogContent = () => {
   };
 
   const handleBook = () => {
-    if (!selectedDate || !selectedTime || !name || !email) return;
+    if (!selectedDate || !selectedTime || !name || !email || !selectedDateKey) return;
 
     // Save booking
     const newBooked = { ...bookedSlots };
-    if (!newBooked[selectedDate]) newBooked[selectedDate] = [];
-    newBooked[selectedDate].push(selectedTime);
+    if (!newBooked[selectedDateKey]) newBooked[selectedDateKey] = [];
+    newBooked[selectedDateKey].push(selectedTime);
     localStorage.setItem("bookedSlots", JSON.stringify(newBooked));
     setBookedSlots(newBooked);
 
     toast({
       title: "Termin gebucht!",
-      description: `${selectedDay?.weekday} ${selectedDay?.day}. ${selectedDay?.month} um ${selectedTime} Uhr${stylist?.id !== "any" ? ` bei ${stylist?.name}` : ""}`,
+      description: `${formatDateLabel(selectedDate)} um ${selectedTime} Uhr${
+        stylist?.id !== "any" ? ` bei ${stylist?.name}` : ""
+      }`,
     });
 
     // Reset
     setStep(1);
     setSelectedService(null);
     setSelectedStylist(null);
-    setSelectedDate(null);
+    setSelectedDate(undefined);
     setSelectedTime(null);
     setName("");
     setEmail("");
@@ -252,71 +256,74 @@ const BookingDialogContent = () => {
             <h3 className="font-serif text-xl text-center mb-4">Wann passt es Ihnen?</h3>
 
             {/* Date Selection */}
-            <div className="mb-6">
-              <p className="text-sm text-muted-foreground mb-3 flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Tag wählen
-              </p>
-              <div className="grid grid-cols-5 gap-2">
-                {days.map((day) => (
-                  <button
-                    key={day.date}
-                    onClick={() => {
-                      setSelectedDate(day.date);
-                      setSelectedTime(null);
-                    }}
-                    className={`p-3 rounded-lg border-2 text-center transition-all ${
-                      selectedDate === day.date
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    }`}
+            <div className="grid gap-6 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] mb-6">
+              <div>
+                <p className="text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                  <CalendarIcon className="w-4 h-4" />
+                  Tag wählen
+                </p>
+                <CalendarPicker
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    setSelectedDate(date);
+                    setSelectedTime(null);
+                  }}
+                  disabled={[{ before: today }, { dayOfWeek: [0] }]}
+                  weekStartsOn={1}
+                  className="rounded-lg border-2 border-border"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Sonntag geschlossen. Monatsansicht im Kalender.
+                </p>
+              </div>
+
+              {/* Time Selection */}
+              <div className="md:pt-1">
+                {selectedDate ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                   >
-                    <p className="text-xs text-muted-foreground">{day.weekday}</p>
-                    <p className="text-lg font-medium">{day.day}</p>
-                  </button>
-                ))}
+                    <p className="text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Uhrzeit wählen
+                      <span className="ml-auto text-xs">
+                        {availableSlots.length} verfügbar
+                      </span>
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 gap-2">
+                      {timeSlots.map((time) => {
+                        const booked = selectedDateKey ? isSlotBooked(selectedDateKey, time) : false;
+                        return (
+                          <button
+                            key={time}
+                            onClick={() => !booked && setSelectedTime(time)}
+                            disabled={booked}
+                            className={`p-3 rounded-lg border-2 text-center transition-all ${
+                              booked
+                                ? "border-border bg-muted text-muted-foreground cursor-not-allowed line-through"
+                                : selectedTime === time
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            {time}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2 text-center">
+                      Durchgestrichene Zeiten sind bereits vergeben
+                    </p>
+                  </motion.div>
+                ) : (
+                  <div className="rounded-lg border-2 border-dashed border-border p-4 text-sm text-muted-foreground">
+                    Bitte zuerst einen Tag im Kalender auswählen.
+                  </div>
+                )}
               </div>
             </div>
-
-            {/* Time Selection */}
-            {selectedDate && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <p className="text-sm text-muted-foreground mb-3 flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  Uhrzeit wählen
-                  <span className="ml-auto text-xs">
-                    {availableSlots.length} verfügbar
-                  </span>
-                </p>
-                <div className="grid grid-cols-4 gap-2">
-                  {timeSlots.map((time) => {
-                    const booked = isSlotBooked(selectedDate, time);
-                    return (
-                      <button
-                        key={time}
-                        onClick={() => !booked && setSelectedTime(time)}
-                        disabled={booked}
-                        className={`p-3 rounded-lg border-2 text-center transition-all ${
-                          booked
-                            ? "border-border bg-muted text-muted-foreground cursor-not-allowed line-through"
-                            : selectedTime === time
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-xs text-muted-foreground mt-2 text-center">
-                  Durchgestrichene Zeiten sind bereits vergeben
-                </p>
-              </motion.div>
-            )}
           </motion.div>
         )}
 
@@ -342,7 +349,7 @@ const BookingDialogContent = () => {
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-muted-foreground">Termin:</span>
                 <span className="font-medium">
-                  {selectedDay?.weekday} {selectedDay?.day}. {selectedDay?.month}, {selectedTime} Uhr
+                  {selectedDate ? formatDateLabel(selectedDate) : ""}, {selectedTime} Uhr
                 </span>
               </div>
               <div className="flex justify-between text-sm">
