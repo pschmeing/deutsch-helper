@@ -9,48 +9,48 @@ import { useTranslation } from "react-i18next";
 const services = [
   {
     icon: Scissors,
-    category: "Schnitte",
+    categoryKey: "services.categories.schnitte",
     items: [
-      { name: "Damenhaarschnitt", price: "ab 45€" },
-      { name: "Herrenhaarschnitt", price: "ab 28€" },
-      { name: "Kinderhaarschnitt", price: "ab 18€" },
-      { name: "Pony nachschneiden", price: "ab 10€" },
+      { nameKey: "services.items.damenhaarschnitt", price: "ab 45€" },
+      { nameKey: "services.items.herrenhaarschnitt", price: "ab 28€" },
+      { nameKey: "services.items.kinderhaarschnitt", price: "ab 18€" },
+      { nameKey: "services.items.pony", price: "ab 10€" },
     ],
   },
   {
     icon: Palette,
-    category: "Färben",
+    categoryKey: "services.categories.farben",
     items: [
-      { name: "Komplettfärbung", price: "ab 65€" },
-      { name: "Strähnchen / Highlights", price: "ab 75€" },
-      { name: "Balayage", price: "ab 120€" },
-      { name: "Ansatz färben", price: "ab 35€" },
+      { nameKey: "services.items.komplett", price: "ab 65€" },
+      { nameKey: "services.items.highlights", price: "ab 75€" },
+      { nameKey: "services.items.balayage", price: "ab 120€" },
+      { nameKey: "services.items.ansatz", price: "ab 35€" },
     ],
   },
   {
     icon: Sparkles,
-    category: "Pflege",
+    categoryKey: "services.categories.pflege",
     items: [
-      { name: "Intensivpflege", price: "ab 25€" },
-      { name: "Keratin-Behandlung", price: "ab 150€" },
-      { name: "Kopfhautmassage", price: "ab 15€" },
-      { name: "Olaplex-Behandlung", price: "ab 40€" },
+      { nameKey: "services.items.intensiv", price: "ab 25€" },
+      { nameKey: "services.items.keratin", price: "ab 150€" },
+      { nameKey: "services.items.massage", price: "ab 15€" },
+      { nameKey: "services.items.olaplex", price: "ab 40€" },
     ],
   },
   {
     icon: Crown,
-    category: "Styling",
+    categoryKey: "services.categories.styling",
     items: [
-      { name: "Föhnen & Styling", price: "ab 30€" },
-      { name: "Hochsteckfrisur", price: "ab 55€" },
-      { name: "Brautstyling", price: "ab 150€" },
-      { name: "Event-Styling", price: "ab 65€" },
+      { nameKey: "services.items.foehnen", price: "ab 30€" },
+      { nameKey: "services.items.hochsteck", price: "ab 55€" },
+      { nameKey: "services.items.braut", price: "ab 150€" },
+      { nameKey: "services.items.event", price: "ab 65€" },
     ],
   },
 ];
 
 interface TiltCardProps {
-  service: typeof services[0];
+  service: typeof services[number];
   index: number;
 }
 
@@ -80,8 +80,8 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
   );
 
   const springConfig = isMobile
-    ? { stiffness: 140, damping: 20, mass: 0.6 }
-    : { stiffness: 200, damping: 15, mass: 0.3 };
+    ? { stiffness: 220, damping: 18, mass: 0.45 }
+    : { stiffness: 380, damping: 20, mass: 0.25 };
 
   const smoothRotateX = useSpring(combinedRotateX, springConfig);
   const smoothRotateY = useSpring(mouseRotateY, springConfig);
@@ -166,17 +166,17 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
             className="font-serif text-xl md:text-2xl text-foreground text-center mb-4 md:mb-6"
             style={{ transform: "translateZ(15px)" }}
           >
-            {t(`services.categories.${service.category.toLowerCase()}`)}
+            {t(service.categoryKey)}
           </h3>
 
           <div className="space-y-3 md:space-y-4" style={{ transform: "translateZ(10px)" }}>
             {service.items.map((item) => (
               <div
-                key={item.name}
+                key={item.nameKey}
                 className="flex justify-between items-center border-b border-border pb-2 md:pb-3"
               >
                 <span className="text-muted-foreground text-xs md:text-sm">
-                  {t(`services.items.${item.name.split(" ")[0].toLowerCase().replace("dr-", "pony")}`)}
+                  {t(item.nameKey)}
                 </span>
                 <span className="text-primary font-medium text-xs md:text-sm whitespace-nowrap ml-2">
                   {item.price}
@@ -215,7 +215,7 @@ const Services = () => {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {services.map((service, index) => (
-            <TiltCard key={service.category} service={service} index={index} />
+            <TiltCard key={service.categoryKey} service={service} index={index} />
           ))}
         </div>
 

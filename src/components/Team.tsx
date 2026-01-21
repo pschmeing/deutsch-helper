@@ -90,9 +90,9 @@ const Team = () => {
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, {
-    stiffness: 140,
-    damping: 22,
-    mass: 0.2,
+    stiffness: 240,
+    damping: 18,
+    mass: 0.15,
   });
 
   // Disable velocity tilt on mobile for better performance, predictability, and if reduced motion is preferred
