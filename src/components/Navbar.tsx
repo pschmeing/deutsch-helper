@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Navbar = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { href: "#home", label: "Home" },
-    { href: "#team", label: "Team" },
-    { href: "#leistungen", label: "Leistungen" },
-    { href: "#kontakt", label: "Kontakt" },
-    { href: "#standort", label: "Standort" },
+    { href: "#home", label: t("nav.home") },
+    { href: "#team", label: t("nav.team") },
+    { href: "#leistungen", label: t("nav.leistungen") },
+    { href: "#kontakt", label: t("nav.kontakt") },
+    { href: "#standort", label: t("nav.standort") },
   ];
 
   const scrollToSection = (href: string) => {

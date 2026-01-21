@@ -4,6 +4,7 @@ import { useRef, MouseEvent, TouchEvent } from "react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useTranslation } from "react-i18next";
 
 const services = [
   {
@@ -54,6 +55,7 @@ interface TiltCardProps {
 }
 
 const TiltCard = ({ service, index }: TiltCardProps) => {
+  const { t } = useTranslation();
   const cardRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
@@ -164,7 +166,7 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
             className="font-serif text-xl md:text-2xl text-foreground text-center mb-4 md:mb-6"
             style={{ transform: "translateZ(15px)" }}
           >
-            {service.category}
+            {t(`services.categories.${service.category.toLowerCase()}`)}
           </h3>
 
           <div className="space-y-3 md:space-y-4" style={{ transform: "translateZ(10px)" }}>
@@ -174,7 +176,7 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
                 className="flex justify-between items-center border-b border-border pb-2 md:pb-3"
               >
                 <span className="text-muted-foreground text-xs md:text-sm">
-                  {item.name}
+                  {t(`services.items.${item.name.split(" ")[0].toLowerCase().replace("dr-", "pony")}`)}
                 </span>
                 <span className="text-primary font-medium text-xs md:text-sm whitespace-nowrap ml-2">
                   {item.price}
@@ -189,6 +191,7 @@ const TiltCard = ({ service, index }: TiltCardProps) => {
 };
 
 const Services = () => {
+  const { t } = useTranslation();
   return (
     <section id="leistungen" className="salon-section bg-background overflow-hidden">
       <div className="salon-container">
@@ -196,12 +199,12 @@ const Services = () => {
         <div className="text-center mb-16">
           <ScrollReveal>
             <p className="text-primary uppercase tracking-[0.3em] text-sm mb-4">
-              Unsere Leistungen
+              {t("services.badge")}
             </p>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <h2 className="salon-heading text-foreground mb-6">
-              Exklusive <span className="italic">Treatments</span>
+              {t("services.title")} <span className="italic">{t("services.subtitle")}</span>
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
@@ -219,7 +222,7 @@ const Services = () => {
         {/* Note */}
         <ScrollReveal delay={0.3} className="text-center mt-12">
           <p className="text-muted-foreground text-sm">
-            Alle Preise verstehen sich als Richtwerte. Individuelle Beratung vor Ort.
+            {t("services.note")}
           </p>
         </ScrollReveal>
       </div>

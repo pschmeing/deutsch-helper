@@ -1,0 +1,151 @@
+{
+    "nav": {
+        "home": "Home",
+        "team": "Team",
+        "leistungen": "Leistungen",
+        "kontakt": "Kontakt",
+        "standort": "Standort",
+        "navigation": "Navigation"
+    },
+    "hero": {
+        "welcome": "Willkommen bei",
+        "title": "Salon",
+        "subtitle": "Élégance",
+        "description": "Wo Schönheit auf Handwerkskunst trifft. Erleben Sie exklusive Haarpflege in einer Atmosphäre zeitloser Eleganz.",
+        "alt": "Luxuriöser Friseursalon"
+    },
+    "notFound": {
+        "title": "404",
+        "subtitle": "Hoppla! Seite nicht gefunden",
+        "returnHome": "Zurück zur Startseite"
+    },
+    "services": {
+        "badge": "Unsere Leistungen",
+        "title": "Exklusive",
+        "subtitle": "Treatments",
+        "note": "Alle Preise verstehen sich als Richtwerte. Individuelle Beratung vor Ort.",
+        "categories": {
+            "schnitte": "Schnitte",
+            "farben": "Färben",
+            "pflege": "Pflege",
+            "styling": "Styling"
+        },
+        "items": {
+            "damenhaarschnitt": "Damenhaarschnitt",
+            "herrenhaarschnitt": "Herrenhaarschnitt",
+            "kinderhaarschnitt": "Kinderhaarschnitt",
+            "pony": "Pony nachschneiden",
+            "komplett": "Komplettfärbung",
+            "highlights": "Strähnchen / Highlights",
+            "balayage": "Balayage",
+            "ansatz": "Ansatz färben",
+            "intensiv": "Intensivpflege",
+            "keratin": "Keratin-Behandlung",
+            "massage": "Kopfhautmassage",
+            "olaplex": "Olaplex-Behandlung",
+            "foehnen": "Föhnen & Styling",
+            "hochsteck": "Hochsteckfrisur",
+            "braut": "Brautstyling",
+            "event": "Event-Styling"
+        },
+        "bookingServices": {
+            "cut": "Haarschnitt",
+            "color": "Färben",
+            "styling": "Styling"
+        }
+    },
+    "team": {
+        "badge": "Unser Team",
+        "title": "Leidenschaft für",
+        "subtitle": "Perfektion",
+        "moreInfo": "Mehr Infos",
+        "specialties": "Schwerpunkte",
+        "signature": "Signature-Look",
+        "languages": "Sprachen",
+        "availability": "Im Salon",
+        "bookingStylists": {
+            "any": "Egal / Erste:r Freie:r",
+            "sarah": "Sarah",
+            "marco": "Marco",
+            "lisa": "Lisa",
+            "specialties": {
+                "sarah": "Schnitte & Braut",
+                "marco": "Barbier",
+                "lisa": "Coloristin"
+            }
+        }
+    },
+    "contact": {
+        "badge": "Termin vereinbaren",
+        "title": "Ihr Weg zum",
+        "subtitle": "Wunschlook",
+        "onlineBooking": "Termin online buchen",
+        "call": "Anrufen",
+        "consultation": "Persönliche Beratung",
+        "consultationText": "Erzählen Sie uns kurz von Ihrem Wunschlook oder lassen Sie uns gemeinsam den perfekten Stil finden. Wir melden uns zeitnah mit Terminbestätigung oder Alternativzeiten.",
+        "tabs": {
+            "demo": "Demo",
+            "zeeg": "Zeeg",
+            "demoDesc": "Demo-Modus mit lokalen Beispieldaten (keine echten Buchungen)."
+        }
+    },
+    "location": {
+        "title": "Unser",
+        "subtitle": "Standort",
+        "addressTitle": "Adresse",
+        "contactTitle": "Kontakt",
+        "phone": "Telefon",
+        "email": "E-Mail",
+        "hours": "Öffnungszeiten",
+        "route": "Route planen"
+    },
+    "footer": {
+        "followUs": "Folgen Sie uns",
+        "rights": "Alle Rechte vorbehalten.",
+        "imprint": "Impressum",
+        "privacy": "Datenschutz"
+    },
+    "booking": {
+        "title": "Termin online buchen",
+        "steps": {
+            "service": "Leistung",
+            "stylist": "Stylist",
+            "date": "Termin",
+            "contact": "Kontakt"
+        },
+        "questions": {
+            "service": "Was möchten Sie buchen?",
+            "stylist": "Bei wem möchten Sie?",
+            "date": "Wann passt es Ihnen?"
+        },
+        "labels": {
+            "pickDay": "Tag wählen",
+            "pickTime": "Uhrzeit wählen",
+            "name": "Ihr Name",
+            "email": "E-Mail",
+            "anyStylist": "Egal / Erste:r Freie:r",
+            "duration": "{{duration}} Min",
+            "available": "{{count}} verfügbar",
+            "closed": "Sonntag geschlossen. Monatsansicht im Kalender.",
+            "placeholderDate": "Bitte zuerst einen Tag im Kalender auswählen.",
+            "placeholderName": "Max Mustermann",
+            "placeholderEmail": "max@beispiel.de",
+            "almostDone": "Fast geschafft!",
+            "booked": "Termin gebucht!",
+            "bookedDesc": "{{date}} um {{time}} Uhr{{stylist}}",
+            "price": "Preis",
+            "timeSuffix": "Uhr",
+            "noTimes": "Durchgestrichene Zeiten sind bereits vergeben"
+        },
+        "buttons": {
+            "back": "Zurück",
+            "next": "Weiter",
+            "book": "Jetzt buchen"
+        },
+        "errors": {
+            "nameRequired": "Bitte geben Sie Ihren Namen an",
+            "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse an",
+            "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse an"
+        }
+    }
+}

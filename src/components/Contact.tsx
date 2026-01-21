@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { CalendarCheck, Phone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import {
   Dialog,
@@ -13,6 +14,7 @@ import ZeegEmbed from "@/components/ZeegEmbed";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Contact = () => {
+  const { t } = useTranslation();
   return (
     <section id="kontakt" className="salon-section bg-secondary overflow-hidden">
       <div className="salon-container">
@@ -20,12 +22,12 @@ const Contact = () => {
         <div className="text-center mb-12 md:mb-16">
           <ScrollReveal>
             <p className="text-primary uppercase tracking-[0.2em] md:tracking-[0.3em] text-xs md:text-sm mb-4">
-              Termin vereinbaren
+              {t("contact.badge")}
             </p>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <h2 className="salon-heading text-foreground mb-6">
-              Ihr Weg zum <span className="italic">Wunschlook</span>
+              {t("contact.title")} <span className="italic">{t("contact.subtitle")}</span>
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
@@ -41,13 +43,13 @@ const Contact = () => {
                     className="salon-button-primary flex items-center gap-2 min-h-[48px] w-full sm:w-auto"
                   >
                     <CalendarCheck className="w-4 h-4" />
-                    Termin online buchen
+                    {t("contact.onlineBooking")}
                   </motion.button>
                 </DialogTrigger>
                 <DialogContent className="max-w-[95vw] sm:max-w-5xl max-h-[90vh]">
                   <DialogHeader>
                     <DialogTitle className="font-serif text-xl md:text-2xl">
-                      Termin online buchen
+                      {t("booking.title")}
                     </DialogTitle>
                   </DialogHeader>
                   <div className="max-h-[calc(90vh-140px)] overflow-y-auto pr-1 md:pr-2">
@@ -76,7 +78,7 @@ const Contact = () => {
                 className="salon-button-outline flex items-center gap-2 min-h-[48px] w-full sm:w-auto"
               >
                 <Phone className="w-4 h-4" />
-                Anrufen
+                {t("contact.call")}
               </motion.a>
             </div>
           </ScrollReveal>
@@ -85,12 +87,10 @@ const Contact = () => {
         <div className="max-w-3xl mx-auto px-4">
           <ScrollReveal variant="fadeIn" className="text-center">
             <h3 className="font-serif text-xl md:text-2xl text-foreground mb-4 md:mb-6">
-              Persönliche Beratung
+              {t("contact.consultation")}
             </h3>
             <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
-              Erzählen Sie uns kurz von Ihrem Wunschlook oder lassen Sie uns
-              gemeinsam den perfekten Stil finden. Wir melden uns zeitnah mit
-              Terminbestätigung oder Alternativzeiten.
+              {t("contact.consultationText")}
             </p>
           </ScrollReveal>
         </div>

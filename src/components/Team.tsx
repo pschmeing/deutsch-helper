@@ -2,6 +2,8 @@ import { motion, useScroll, useSpring, useTransform, useVelocity } from "framer-
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useTranslation } from "react-i18next";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 import {
   Carousel,
   CarouselContent,
@@ -82,6 +84,7 @@ const teamMembers = [
 ];
 
 const Team = () => {
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
@@ -107,12 +110,12 @@ const Team = () => {
         <div className="text-center mb-16">
           <ScrollReveal>
             <p className="text-primary uppercase tracking-[0.3em] text-sm mb-4">
-              Unser Team
+              {t("team.badge")}
             </p>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <h2 className="salon-heading text-foreground mb-6">
-              Leidenschaft für <span className="italic">Perfektion</span>
+              {t("team.title")} <span className="italic">{t("team.subtitle")}</span>
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
@@ -139,13 +142,17 @@ const Team = () => {
                     >
                       {/* Image */}
                       <div className="relative overflow-hidden aspect-[4/5]">
-                        <motion.img
-                          src={member.image}
-                          alt={member.name}
-                          className="w-full h-full object-cover"
+                        <motion.div
                           whileHover={{ scale: 1.06 }}
                           transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
-                        />
+                          className="w-full h-full"
+                        >
+                          <OptimizedImage
+                            src={member.image}
+                            alt={member.name}
+                            className="w-full h-full"
+                          />
+                        </motion.div>
                         <motion.div
                           initial={{ opacity: 0 }}
                           whileHover={{ opacity: 1 }}
@@ -166,7 +173,7 @@ const Team = () => {
                           {member.experience}
                         </p>
                         <span className="text-primary text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] md:tracking-[0.3em]">
-                          Mehr Infos
+                          {t("team.moreInfo")}
                         </span>
                       </div>
                     </motion.button>
@@ -174,10 +181,10 @@ const Team = () => {
                   <DialogContent className="bg-card text-foreground border-border max-w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto">
                     <div className="grid gap-4 md:gap-6 md:grid-cols-[220px_1fr]">
                       <div className="overflow-hidden rounded-sm max-h-[200px] md:max-h-none">
-                        <img
+                        <OptimizedImage
                           src={member.image}
                           alt={member.name}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full"
                         />
                       </div>
                       <div>
@@ -194,7 +201,7 @@ const Team = () => {
                         </p>
                         <div className="mt-4">
                           <p className="text-[0.65rem] md:text-xs uppercase tracking-[0.15em] md:tracking-[0.2em] text-primary">
-                            Schwerpunkte
+                            {t("team.specialties")}
                           </p>
                           <div className="mt-2 flex flex-wrap gap-1.5 md:gap-2">
                             {member.specialties.map((specialty) => (
@@ -209,15 +216,15 @@ const Team = () => {
                         </div>
                         <div className="mt-4 grid gap-1.5 md:gap-2 text-xs md:text-sm">
                           <p className="text-muted-foreground">
-                            <span className="text-foreground">Signature-Look:</span>{" "}
+                            <span className="text-foreground">{t("team.signature")}:</span>{" "}
                             {member.signature}
                           </p>
                           <p className="text-muted-foreground">
-                            <span className="text-foreground">Sprachen:</span>{" "}
+                            <span className="text-foreground">{t("team.languages")}:</span>{" "}
                             {member.languages.join(" · ")}
                           </p>
                           <p className="text-muted-foreground">
-                            <span className="text-foreground">Im Salon:</span>{" "}
+                            <span className="text-foreground">{t("team.availability")}:</span>{" "}
                             {member.availability}
                           </p>
                         </div>

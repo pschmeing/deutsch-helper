@@ -3,8 +3,11 @@ import { useRef } from "react";
 import heroImage from "@/assets/hero-salon.jpg";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useTranslation } from "react-i18next";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 const Hero = () => {
+  const { t } = useTranslation();
   const ref = useRef(null);
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
@@ -14,7 +17,6 @@ const Hero = () => {
     offset: ["start start", "end start"],
   });
 
-  // Disable parallax if reduced motion is preferred, reduce on mobile for better performance
   const y = useTransform(
     scrollYProgress,
     [0, 1],
@@ -33,12 +35,11 @@ const Hero = () => {
       id="home"
       className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
     >
-      {/* Parallax Background Image */}
       <motion.div className="absolute inset-0" style={{ y, scale }}>
-        <img
+        <OptimizedImage
           src={heroImage}
-          alt="Luxuriöser Friseursalon"
-          className="w-full h-full object-cover"
+          alt={t("hero.alt", { defaultValue: "Luxuriöser Friseursalon" })}
+          className="w-full h-full"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-foreground/40 to-foreground/80" />
       </motion.div>
@@ -54,7 +55,7 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
           className="text-primary-foreground/80 uppercase tracking-[0.2em] md:tracking-[0.3em] text-xs md:text-sm mb-4 md:mb-6"
         >
-          Willkommen bei
+          {t("hero.welcome")}
         </motion.p>
 
         <motion.h1
@@ -63,7 +64,7 @@ const Hero = () => {
           transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
           className="font-serif text-4xl md:text-7xl lg:text-8xl text-primary-foreground mb-4 md:mb-6 leading-tight"
         >
-          Salon <span className="italic">Élégance</span>
+          {t("hero.title")} <span className="italic">{t("hero.subtitle")}</span>
         </motion.h1>
 
         <motion.div
@@ -79,8 +80,7 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
           className="text-primary-foreground/90 text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-2"
         >
-          Wo Schönheit auf Handwerkskunst trifft. Erleben Sie exklusive Haarpflege
-          in einer Atmosphäre zeitloser Eleganz.
+          {t("hero.description")}
         </motion.p>
       </motion.div>
 

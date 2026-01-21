@@ -1,32 +1,35 @@
 import { motion } from "framer-motion";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 
-const contactInfo = [
-  {
-    icon: Phone,
-    title: "Telefon",
-    content: "+49 123 456 7890",
-  },
-  {
-    icon: Mail,
-    title: "E-Mail",
-    content: "info@salon-elegance.de",
-  },
-  {
-    icon: Clock,
-    title: "Öffnungszeiten",
-    content: (
-      <>
-        Mo - Fr: 09:00 - 19:00 Uhr<br />
-        Sa: 09:00 - 16:00 Uhr<br />
-        So: Geschlossen
-      </>
-    ),
-  },
-];
-
 const Location = () => {
+  const { t } = useTranslation();
+
+  const contactInfo = [
+    {
+      icon: Phone,
+      title: t("location.phone"),
+      content: "+49 123 456 7890",
+    },
+    {
+      icon: Mail,
+      title: t("location.email"),
+      content: "info@salon-elegance.de",
+    },
+    {
+      icon: Clock,
+      title: t("location.hours"),
+      content: (
+        <>
+          Mo - Fr: 09:00 - 19:00 Uhr<br />
+          Sa: 09:00 - 16:00 Uhr<br />
+          So: Geschlossen
+        </>
+      ),
+    },
+  ];
+
   return (
     <section id="standort" className="salon-section bg-background overflow-hidden">
       <div className="salon-container">
@@ -34,7 +37,7 @@ const Location = () => {
         <div className="text-center mb-12 md:mb-16">
           <ScrollReveal delay={0.1}>
             <h2 className="salon-heading text-foreground mb-6">
-              Unser <span className="italic">Standort</span>
+              {t("location.title")} <span className="italic">{t("location.subtitle")}</span>
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.2}>
@@ -76,7 +79,7 @@ const Location = () => {
                 </motion.div>
                 <div>
                   <h3 className="font-serif text-xl md:text-2xl text-foreground mb-2 md:mb-3">
-                    Adresse
+                    {t("location.addressTitle")}
                   </h3>
                   <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
                     Salon Élégance<br />
@@ -91,7 +94,7 @@ const Location = () => {
             <ScrollReveal variant="fadeIn" delay={0.2}>
               <div className="md:pl-4">
                 <h3 className="font-serif text-xl md:text-2xl text-foreground mb-4 md:mb-6">
-                  Kontakt
+                  {t("location.contactTitle")}
                 </h3>
                 <div className="space-y-4 md:space-y-6">
                   {contactInfo.map((info) => (
@@ -126,7 +129,7 @@ const Location = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Route planen
+                {t("location.route")}
               </motion.a>
             </ScrollReveal>
           </div>

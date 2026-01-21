@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight, Clock, Calendar as CalendarIcon, User, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 // Services
 const services = [
@@ -61,6 +63,7 @@ const getBookedSlots = (): Record<string, string[]> => {
 };
 
 const BookingDialogContent = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -69,6 +72,7 @@ const BookingDialogContent = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
   const [bookedSlots, setBookedSlots] = useState(getBookedSlots);
 
   const service = services.find((s) => s.id === selectedService);
@@ -102,7 +106,21 @@ const BookingDialogContent = () => {
   };
 
   const handleBook = () => {
-    if (!selectedDate || !selectedTime || !name || !email || !selectedDateKey) return;
+    if (!selectedDate || !selectedTime || !selectedDateKey) return;
+
+    // Manual validation
+    const newErrors: { name?: string; email?: string } = {};
+    if (!name.trim()) newErrors.name = t("booking.errors.nameRequired", { defaultValue: "Name ist erforderlich" });
+    if (!email.trim()) {
+      newErrors.email = t("booking.errors.emailRequired", { defaultValue: "Email ist erforderlich" });
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = t("booking.errors.emailInvalid", { defaultValue: "Ungültige Email-Adresse" });
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     // Save booking
     const newBooked = { ...bookedSlots };
@@ -112,10 +130,12 @@ const BookingDialogContent = () => {
     setBookedSlots(newBooked);
 
     toast({
-      title: "Termin gebucht!",
-      description: `${formatDateLabel(selectedDate)} um ${selectedTime} Uhr${
-        stylist?.id !== "any" ? ` bei ${stylist?.name}` : ""
-      }`,
+      title: t("booking.labels.booked"),
+      description: t("booking.labels.bookedDesc", {
+        date: formatDateLabel(selectedDate),
+        time: selectedTime,
+        stylist: stylist?.id !== "any" ? ` bei ${stylist?.name}` : ""
+      }),
     });
 
     // Reset
@@ -135,21 +155,19 @@ const BookingDialogContent = () => {
         {[1, 2, 3, 4].map((s) => (
           <div key={s} className="flex items-center">
             <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
-                s < step
-                  ? "bg-primary text-primary-foreground"
-                  : s === step
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all ${s < step
+                ? "bg-primary text-primary-foreground"
+                : s === step
                   ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
                   : "bg-muted text-muted-foreground"
-              }`}
+                }`}
             >
               {s < step ? <Check className="w-3 h-3" /> : s}
             </div>
             {s < 4 && (
               <div
-                className={`w-8 h-0.5 mx-0.5 ${
-                  s < step ? "bg-primary" : "bg-muted"
-                }`}
+                className={`w-8 h-0.5 mx-0.5 ${s < step ? "bg-primary" : "bg-muted"
+                  }`}
               />
             )}
           </div>
@@ -158,10 +176,10 @@ const BookingDialogContent = () => {
 
       {/* Step Labels */}
       <div className="flex justify-between text-[10px] text-muted-foreground mb-6 px-2">
-        <span className={step === 1 ? "text-primary font-medium" : ""}>Leistung</span>
-        <span className={step === 2 ? "text-primary font-medium" : ""}>Stylist</span>
-        <span className={step === 3 ? "text-primary font-medium" : ""}>Termin</span>
-        <span className={step === 4 ? "text-primary font-medium" : ""}>Kontakt</span>
+        <span className={step === 1 ? "text-primary font-medium" : ""}>{t("booking.steps.service")}</span>
+        <span className={step === 2 ? "text-primary font-medium" : ""}>{t("booking.steps.stylist")}</span>
+        <span className={step === 3 ? "text-primary font-medium" : ""}>{t("booking.steps.date")}</span>
+        <span className={step === 4 ? "text-primary font-medium" : ""}>{t("booking.steps.contact")}</span>
       </div>
 
       {/* Content */}
@@ -174,23 +192,22 @@ const BookingDialogContent = () => {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-3"
           >
-            <h3 className="font-serif text-xl text-center mb-4">Was möchten Sie buchen?</h3>
+            <h3 className="font-serif text-xl text-center mb-4">{t("booking.questions.service")}</h3>
             {services.map((s) => (
               <button
                 key={s.id}
                 onClick={() => setSelectedService(s.id)}
-                className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                  selectedService === s.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/50"
-                }`}
+                className={`w-full p-4 rounded-lg border-2 text-left transition-all ${selectedService === s.id
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50"
+                  }`}
               >
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="font-medium text-foreground">{s.name}</p>
                     <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
                       <Clock className="w-3 h-3" />
-                      {s.duration} Min
+                      {t("booking.labels.duration", { duration: s.duration })}
                     </p>
                   </div>
                   <span className="text-lg font-medium text-primary">{s.price}€</span>
@@ -208,22 +225,20 @@ const BookingDialogContent = () => {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-3"
           >
-            <h3 className="font-serif text-xl text-center mb-4">Bei wem möchten Sie?</h3>
+            <h3 className="font-serif text-xl text-center mb-4">{t("booking.questions.stylist")}</h3>
             {stylists.map((s) => (
               <button
                 key={s.id}
                 onClick={() => setSelectedStylist(s.id)}
-                className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                  selectedStylist === s.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/50"
-                }`}
+                className={`w-full p-4 rounded-lg border-2 text-left transition-all ${selectedStylist === s.id
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50"
+                  }`}
               >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      s.id === "any" ? "bg-muted" : "bg-primary/10"
-                    }`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${s.id === "any" ? "bg-muted" : "bg-primary/10"
+                      }`}>
                       {s.id === "any" ? (
                         <Users className="w-5 h-5 text-muted-foreground" />
                       ) : (
@@ -231,7 +246,9 @@ const BookingDialogContent = () => {
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">{s.name}</p>
+                      <p className="font-medium text-foreground">
+                        {s.id === "any" ? t("booking.labels.anyStylist") : s.name}
+                      </p>
                       {s.specialty && (
                         <p className="text-xs text-muted-foreground">{s.specialty}</p>
                       )}
@@ -253,14 +270,14 @@ const BookingDialogContent = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <h3 className="font-serif text-xl text-center mb-4">Wann passt es Ihnen?</h3>
+            <h3 className="font-serif text-xl text-center mb-4">{t("booking.questions.date")}</h3>
 
             {/* Date Selection */}
             <div className="grid gap-6 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] mb-6">
               <div>
                 <p className="text-sm text-muted-foreground mb-3 flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4" />
-                  Tag wählen
+                  {t("booking.labels.pickDay")}
                 </p>
                 <CalendarPicker
                   mode="single"
@@ -274,7 +291,7 @@ const BookingDialogContent = () => {
                   className="rounded-lg border-2 border-border"
                 />
                 <p className="text-xs text-muted-foreground mt-2">
-                  Sonntag geschlossen. Monatsansicht im Kalender.
+                  {t("booking.labels.closed")}
                 </p>
               </div>
 
@@ -287,9 +304,9 @@ const BookingDialogContent = () => {
                   >
                     <p className="text-sm text-muted-foreground mb-3 flex items-center gap-2">
                       <Clock className="w-4 h-4" />
-                      Uhrzeit wählen
+                      {t("booking.labels.pickTime")}
                       <span className="ml-auto text-xs">
-                        {availableSlots.length} verfügbar
+                        {t("booking.labels.available", { count: availableSlots.length })}
                       </span>
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 gap-2">
@@ -300,13 +317,12 @@ const BookingDialogContent = () => {
                             key={time}
                             onClick={() => !booked && setSelectedTime(time)}
                             disabled={booked}
-                            className={`p-3 rounded-lg border-2 text-center transition-all ${
-                              booked
-                                ? "border-border bg-muted text-muted-foreground cursor-not-allowed line-through"
-                                : selectedTime === time
+                            className={`p-3 rounded-lg border-2 text-center transition-all ${booked
+                              ? "border-border bg-muted text-muted-foreground cursor-not-allowed line-through"
+                              : selectedTime === time
                                 ? "border-primary bg-primary text-primary-foreground"
                                 : "border-border hover:border-primary/50"
-                            }`}
+                              }`}
                           >
                             {time}
                           </button>
@@ -319,7 +335,7 @@ const BookingDialogContent = () => {
                   </motion.div>
                 ) : (
                   <div className="rounded-lg border-2 border-dashed border-border p-4 text-sm text-muted-foreground">
-                    Bitte zuerst einen Tag im Kalender auswählen.
+                    {t("booking.labels.placeholderDate")}
                   </div>
                 )}
               </div>
@@ -334,20 +350,20 @@ const BookingDialogContent = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <h3 className="font-serif text-xl text-center mb-4">Fast geschafft!</h3>
+            <h3 className="font-serif text-xl text-center mb-4">{t("booking.labels.almostDone")}</h3>
 
             {/* Summary */}
             <div className="bg-secondary/50 rounded-lg p-4 mb-6">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-muted-foreground">Leistung:</span>
+                <span className="text-muted-foreground">{t("booking.steps.service")}:</span>
                 <span className="font-medium">{service?.name}</span>
               </div>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-muted-foreground">Stylist:</span>
+                <span className="text-muted-foreground">{t("booking.steps.stylist")}:</span>
                 <span className="font-medium">{stylist?.name}</span>
               </div>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-muted-foreground">Termin:</span>
+                <span className="text-muted-foreground">{t("booking.steps.date")}:</span>
                 <span className="font-medium">
                   {selectedDate ? formatDateLabel(selectedDate) : ""}, {selectedTime} Uhr
                 </span>
@@ -363,27 +379,38 @@ const BookingDialogContent = () => {
               <div>
                 <label className="block text-sm font-medium mb-2">
                   <User className="w-4 h-4 inline mr-2" />
-                  Ihr Name
+                  {t("booking.labels.name")}
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Max Mustermann"
-                  className="w-full p-3 rounded-lg border-2 border-border focus:border-primary focus:outline-none transition-all"
+                  placeholder={t("booking.labels.placeholderName")}
+                  className={cn(
+                    "w-full p-3 rounded-lg border-2 focus:outline-none transition-all",
+                    errors.name ? "border-destructive" : "border-border focus:border-primary"
+                  )}
                 />
+                {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  E-Mail
+                  {t("booking.labels.email")}
                 </label>
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="max@beispiel.de"
-                  className="w-full p-3 rounded-lg border-2 border-border focus:border-primary focus:outline-none transition-all"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors({ ...errors, email: undefined });
+                  }}
+                  placeholder={t("booking.labels.placeholderEmail")}
+                  className={cn(
+                    "w-full p-3 rounded-lg border-2 focus:outline-none transition-all",
+                    errors.email ? "border-destructive" : "border-border focus:border-primary"
+                  )}
                 />
+                {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
               </div>
             </div>
           </motion.div>
@@ -398,7 +425,7 @@ const BookingDialogContent = () => {
             className="flex items-center gap-2 px-4 py-3 rounded-lg border-2 border-border hover:border-primary/50 transition-all"
           >
             <ChevronLeft className="w-4 h-4" />
-            Zurück
+            {t("booking.buttons.back")}
           </button>
         )}
 
@@ -406,27 +433,25 @@ const BookingDialogContent = () => {
           <button
             onClick={handleNext}
             disabled={!canProceed()}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${
-              canProceed()
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-            }`}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${canProceed()
+              ? "bg-primary text-primary-foreground hover:bg-primary/90"
+              : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
           >
-            Weiter
+            {t("booking.buttons.next")}
             <ChevronRight className="w-4 h-4" />
           </button>
         ) : (
           <button
             onClick={handleBook}
             disabled={!canProceed()}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${
-              canProceed()
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-            }`}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${canProceed()
+              ? "bg-primary text-primary-foreground hover:bg-primary/90"
+              : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
           >
             <Check className="w-4 h-4" />
-            Jetzt buchen
+            {t("booking.buttons.book")}
           </button>
         )}
       </div>
